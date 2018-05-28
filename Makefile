@@ -12,3 +12,9 @@ test/python2:
 .PHONY: docs
 docs:
 	sphinx-build docs docs/.build
+
+.PHONY: upload
+upload:
+	rm -rf dist
+	python3 setup.py sdist
+	twine upload dist/*
