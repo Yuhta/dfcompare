@@ -15,6 +15,6 @@ docs:
 
 .PHONY: upload
 upload:
-	rm -rf dist
+	rm -rf dfcompare.egg-info dist
 	python3 setup.py sdist
 	twine upload dist/*
