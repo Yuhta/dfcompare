@@ -9,4 +9,5 @@ setup(name='dfcompare',
       url='https://github.com/Yuhta/dfcompare',
       author="Jimmy Lu",
       author_email="gongchuo.lu@gmail.com",
+      install_requires=['pandas'],
       long_description=long_description)
