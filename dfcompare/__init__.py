@@ -73,31 +73,46 @@ def _external_sort(dfs):
         shutil.rmtree(dir)
 
 class Identical(object):
+    """
+    Indicate that two rows are identical
+
+    :ivar left: left row
+    :ivar right: right row
+    """
 
     def __init__(self, l, r):
         self.left, self.right = l, r
 
 class Different(object):
+    """
+    Indicate that two rows are different
+
+    :ivar left: left row
+    :ivar right: right row
+    :ivar diff: indices of columns that are different, exclude the index (first) column
+    """
 
     def __init__(self, l, r, diff):
         self.left, self.right = l, r
         self.diff = diff
 
-class InLeftOnly(object):
+class Unmatched(object):
+    """
+    Indicate that this row is in one side only
 
-    def __init__(self, l):
-        self.left = l
+    :ivar row: row content
+    :ivar side: 0 means in left only, 1 means in right only
+    """
 
-class InRightOnly(object):
-
-    def __init__(self, r):
-        self.right = r
+    def __init__(self, row, side):
+        self.row = row
+        self.side = side
 
 def _compare_row(l, r):
     if r is None:
-        return InLeftOnly(l)
+        return Unmatched(l, 0)
     if l is None:
-        return InRightOnly(r)
+        return Unmatched(r, 1)
     assert len(l) == len(r)
     diff = []
     for i in range(1, len(l)):
@@ -106,6 +121,18 @@ def _compare_row(l, r):
     return Different(l, r, diff) if diff else Identical(l, r)
 
 def compare(left, right, iterator=False, sort=True):
+    """
+    Compare 2 data sets
+
+    :param left: data set to be compared on left side
+    :type left: DataFrame or iterable of DataFrame
+    :param right: data set to be compared on right side
+    :type right: DataFrame or iterable of DataFrame
+    :param bool iterator: whether *left* and *right* are iterable or single DataFrames
+    :param bool sort: whether sort the inputs before comparing
+    :return: iterator of diff results, which consist of :class:`Identical`,
+             :class:`Different`, or :class:`Unmatched`
+    """
     def to_iter(df):
         if iterator:
             dfs = df

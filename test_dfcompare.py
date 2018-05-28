@@ -1,4 +1,4 @@
-from dfcompare import BufferedIterator, compare, Identical, Different, InLeftOnly, InRightOnly
+from dfcompare import BufferedIterator, compare, Identical, Different, Unmatched
 import pandas as pd
 import unittest
 
@@ -54,14 +54,16 @@ class TestCompare(unittest.TestCase):
         r = pd.DataFrame({'A': [1, 2]}, index=(1, 3))
         d = list(compare(l, r))
         self.assertEqual(len(d), 3)
-        self.assertIsInstance(d[1], InLeftOnly)
+        self.assertIsInstance(d[1], Unmatched)
+        self.assertEqual(d[1].side, 0)
 
     def test_in_right_only(self):
         l = pd.DataFrame({'A': [1, 2]}, index=(1, 3))
         r = pd.DataFrame({'A': [1, 2, 3]}, index=(1, 2, 3))
         d = list(compare(l, r))
         self.assertEqual(len(d), 3)
-        self.assertIsInstance(d[1], InRightOnly)
+        self.assertIsInstance(d[1], Unmatched)
+        self.assertEqual(d[1].side, 1)
 
     def test_external_sort(self):
         l = [pd.DataFrame({'A': [1, 2, 3]}, index=(1, 2, 3)),
